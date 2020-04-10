@@ -26,7 +26,7 @@
                 "value::1",
                 "value::all"
               ],
-              "includeAll": false
+              "includeAll": true
             },
             "resourceType": "microsoft.insights/components"
           },
@@ -148,7 +148,6 @@
             "value": [
               "value::all"
             ],
-            "isHiddenWhenLocked": true,
             "typeSettings": {
               "additionalResourceOptions": [
                 "value::all"
@@ -2015,32 +2014,6 @@
         ],
         "parameters": [
           {
-            "id": "03664975-f96c-4d61-9c33-a241584fb4e4",
-            "version": "KqlParameterItem/1.0",
-            "name": "LogicApp",
-            "type": 5,
-            "multiSelect": true,
-            "quote": "'",
-            "delimiter": ",",
-            "query": "AzureDiagnostics\r\n| where Category == \"WorkflowRuntime\" \r\n| where \r\n| distinct resource_workflowName_s",
-            "crossComponentResources": [
-              "{Workspace}"
-            ],
-            "value": null,
-            "typeSettings": {
-              "additionalResourceOptions": [
-                "value::1",
-                "value::all"
-              ]
-            },
-            "timeContext": {
-              "durationMs": 0
-            },
-            "timeContextFromParameter": "TimeRange",
-            "queryType": 0,
-            "resourceType": "microsoft.operationalinsights/workspaces"
-          },
-          {
             "id": "cc016bdb-7848-438e-a37d-1a7ce579a7a3",
             "version": "KqlParameterItem/1.0",
             "name": "Level",
@@ -2107,7 +2080,7 @@
       "type": 3,
       "content": {
         "version": "KqlItem/1.0",
-        "query": "AzureDiagnostics\r\n| where Category == \"WorkflowRuntime\" \r\n| project workflowId_s, status_s, Type, code_s, error_code_s, error_message_s, TimeGenerated, TenantId, SubscriptionId, startTime_t, ResourceType, ResourceProvider,ResourceId, ResourceGroup, resource_workflowName_s, resource_workflowId_g, resource_triggerName_s, resource_subscriptionId_g,resource_runId_s, resource_resourceGroupName_s, resource_location_s, Resource, OperationName, Level, correlation_clientTrackingId_s, Category\r\n| where resource_workflowName_s in ({LogicApp}) or '*' in ({LogicApp})\r\n| where status_s in ({Status}) or '*' in ({Status})\r\n| where Level in ({Level}) or '*' in ({Level})\r\n| extend Details=pack_all()\r\n| extend TimeFromNow = now() - TimeGenerated\r\n| extend TimeAgo = strcat(case(TimeFromNow < 2m, strcat(toint(TimeFromNow / 1m), ' seconds'), TimeFromNow < 2h, strcat(toint(TimeFromNow / 1m), ' minutes'), TimeFromNow < 2d, strcat(toint(TimeFromNow / 1h), ' hours'), strcat(toint(TimeFromNow / 1d), ' days')), ' ago') \r\n| project LogicApp=workflowId_s, Details, Status=status_s, Level, OperationName, Code=code_s, Error=error_code_s, ErrorMessage=error_message_s, [\"Time\"]=strcat('🕒', TimeAgo)",
+        "query": "AzureDiagnostics\r\n| where Category == \"WorkflowRuntime\" \r\n| project workflowId_s, status_s, Type, code_s, error_code_s, error_message_s, TimeGenerated, TenantId, SubscriptionId, startTime_t, ResourceType, ResourceProvider,ResourceId, ResourceGroup, resource_workflowName_s, resource_workflowId_g, resource_triggerName_s, resource_subscriptionId_g,resource_runId_s, resource_resourceGroupName_s, resource_location_s, Resource, OperationName, Level, correlation_clientTrackingId_s, Category, _ResourceId\r\n| where workflowId_s in~ ({LogicApps}) or '*' in~ ({LogicApps})\r\n| where status_s in ({Status}) or '*' in ({Status})\r\n| where Level in ({Level}) or '*' in ({Level})\r\n| extend Details=pack_all()\r\n| extend TimeFromNow = now() - TimeGenerated\r\n| extend TimeAgo = strcat(case(TimeFromNow < 2m, strcat(toint(TimeFromNow / 1m), ' seconds'), TimeFromNow < 2h, strcat(toint(TimeFromNow / 1m), ' minutes'), TimeFromNow < 2d, strcat(toint(TimeFromNow / 1h), ' hours'), strcat(toint(TimeFromNow / 1d), ' days')), ' ago') \r\n| project LogicApp=workflowId_s, Details, Status=status_s, Level, OperationName, Code=code_s, Error=error_code_s, ErrorMessage=error_message_s, [\"Time\"]=strcat('🕒', TimeAgo)",
         "size": 0,
         "timeContext": {
           "durationMs": 0
@@ -2224,7 +2197,7 @@
           ]
         }
       },
-      "name": "query - 7"
+      "name": "Logs"
     }
   ],
   "$schema": "https://github.com/Microsoft/Application-Insights-Workbooks/blob/master/schema/workbook.json"

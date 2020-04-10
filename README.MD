@@ -20,3 +20,6 @@ related blog post https://www.systemcenterautomation.com/2020/03/logicapps-azure
 ![image](./images/2020-03-30_11-26-04.png)
 
 ![image](./images/2020-03-30_11-26-34.png)
+
+## Notes
+Please verify that the subscriptions parameter brings in all possible subscriptions. I have noticed importing these that it changes from All subscriptions to default subscriptions.
